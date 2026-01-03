@@ -11,8 +11,8 @@ using WebSecurityDemo.Data;
 namespace WebSecurityDemo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251210035940_AddCustomer")]
-    partial class AddCustomer
+    [Migration("20260103024123_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,7 +248,7 @@ namespace WebSecurityDemo.Migrations
                         new
                         {
                             CustomerId = 1,
-                            CreatedDate = new DateTime(2025, 12, 10, 3, 59, 39, 900, DateTimeKind.Utc).AddTicks(9154),
+                            CreatedDate = new DateTime(2026, 1, 3, 2, 41, 23, 361, DateTimeKind.Utc).AddTicks(5472),
                             Email = "jordan.smith@example.com",
                             FirstName = "Jordan",
                             LastName = "Smith",
@@ -257,7 +257,7 @@ namespace WebSecurityDemo.Migrations
                         new
                         {
                             CustomerId = 2,
-                            CreatedDate = new DateTime(2025, 12, 10, 3, 59, 39, 900, DateTimeKind.Utc).AddTicks(9157),
+                            CreatedDate = new DateTime(2026, 1, 3, 2, 41, 23, 361, DateTimeKind.Utc).AddTicks(5476),
                             Email = "taylor.lee@example.com",
                             FirstName = "Taylor",
                             LastName = "Lee",
@@ -266,7 +266,7 @@ namespace WebSecurityDemo.Migrations
                         new
                         {
                             CustomerId = 3,
-                            CreatedDate = new DateTime(2025, 12, 10, 3, 59, 39, 900, DateTimeKind.Utc).AddTicks(9159),
+                            CreatedDate = new DateTime(2026, 1, 3, 2, 41, 23, 361, DateTimeKind.Utc).AddTicks(5477),
                             Email = "alex.patel@example.com",
                             FirstName = "Alex",
                             LastName = "Patel",

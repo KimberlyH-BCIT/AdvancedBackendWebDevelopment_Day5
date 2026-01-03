@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using WebSecurityDemo.Data;
 using WebSecurityDemo.ViewModels;
 
 namespace WebSecurityDemo.Repositories;
 
-public class RoleRepository
+public class RoleRepository : IRoleRepository
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<RoleRepository> _logger;
 
-    public RoleRepository(ApplicationDbContext context)
+    public RoleRepository(ApplicationDbContext context, ILogger<RoleRepository> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public List<RoleVM> GetAllRoles()
@@ -26,6 +29,11 @@ public class RoleRepository
 
     public RoleVM? GetRole(string roleName)
     {
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            return null;
+        }
+
         var role = _context.Roles
             .FirstOrDefault(r => r.Name == roleName);
 
@@ -43,13 +51,19 @@ public class RoleRepository
 
     public bool CreateRole(string roleName)
     {
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            _logger.LogWarning("Attempt to create role with empty name.");
+            return false;
+        }
+
         try
         {
             _context.Roles.Add(new IdentityRole
             {
-                Id = roleName,
+                Id = Guid.NewGuid().ToString(),
                 Name = roleName,
-                NormalizedName = roleName.ToUpper()
+                NormalizedName = roleName.ToUpperInvariant()
             });
 
             _context.SaveChanges();
@@ -57,14 +71,19 @@ public class RoleRepository
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error creating role:" +
-                              $" {ex.Message}");
+            _logger.LogError(ex, "Error creating role '{RoleName}'", roleName);
             return false;
         }
     }
 
     public bool DeleteRole(string roleName)
     {
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            _logger.LogWarning("Attempt to delete role with empty name.");
+            return false;
+        }
+
         try
         {
             var role = _context.Roles
@@ -81,7 +100,7 @@ public class RoleRepository
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error deleting role: {ex.Message}");
+            _logger.LogError(ex, "Error deleting role '{RoleName}'", roleName);
             return false;
         }
     }

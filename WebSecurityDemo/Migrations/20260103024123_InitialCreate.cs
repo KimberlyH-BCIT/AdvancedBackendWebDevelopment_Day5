@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace WebSecurityDemo.Migrations
 {
     /// <inheritdoc />
@@ -48,6 +50,23 @@ namespace WebSecurityDemo.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customers",
+                columns: table => new
+                {
+                    CustomerId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +175,16 @@ namespace WebSecurityDemo.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Customers",
+                columns: new[] { "CustomerId", "CreatedDate", "Email", "FirstName", "LastName", "PhoneNumber" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 3, 2, 41, 23, 361, DateTimeKind.Utc).AddTicks(5472), "jordan.smith@example.com", "Jordan", "Smith", "604-555-0101" },
+                    { 2, new DateTime(2026, 1, 3, 2, 41, 23, 361, DateTimeKind.Utc).AddTicks(5476), "taylor.lee@example.com", "Taylor", "Lee", "604-555-0102" },
+                    { 3, new DateTime(2026, 1, 3, 2, 41, 23, 361, DateTimeKind.Utc).AddTicks(5477), "alex.patel@example.com", "Alex", "Patel", "604-555-0103" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -211,6 +240,9 @@ namespace WebSecurityDemo.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -16,11 +16,24 @@
                                     @item.RoleName
                                 </td>
                                 <td class="text-end pe-3">
-                                    @Html.ActionLink(
-                                        "Delete",
-                                        "Delete",
-                                        new { roleName = item.RoleName },
-                                        new { @class = "btn btn-sm btn-outline-danger px-3" })
+                                    @if (User.IsInRole("Manager"))
+                                    {
+                                        <form asp-action="Delete" asp-controller="Role" method="post"
+                                              style="display:inline;">
+                                            @Html.AntiForgeryToken()                                        
+                                            <input type="hidden" name="roleName" value="@item.RoleName" />
+                                            <button type="submit" class="btn btn-outline-danger"
+                                                    onclick="return confirm('Are you sure you want to delete this role?');">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                     }
+                                    else
+                                    {
+                                        <button class="btn btn-outline-danger btn-sm" disabled title="Only Managers can delete roles">
+                                            <i class="bi bi-lock"></i> Delete
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }

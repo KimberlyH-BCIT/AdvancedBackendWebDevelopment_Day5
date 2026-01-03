@@ -1,19 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebSecurityDemo.Repositories;
 using WebSecurityDemo.ViewModels;
 
 namespace WebSecurityDemo.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Manager")]
     public class UserRoleController : Controller
     {
         private readonly UserRepository _userRepo;
-        private readonly RoleRepository _roleRepo;
+        private readonly IRoleRepository _roleRepo;
         private readonly UserRoleRepository _userRoleRepo;
 
         public UserRoleController(UserRepository userRepo,
-                                  RoleRepository roleRepo,
+                                  IRoleRepository roleRepo,
                                   UserRoleRepository userRoleRepo)
         {
             _userRepo = userRepo;
@@ -38,6 +39,9 @@ namespace WebSecurityDemo.Controllers
         }
 
         // Delete role from user
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string userName, string roleName)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(roleName))
@@ -69,6 +73,8 @@ namespace WebSecurityDemo.Controllers
 
         // Assigns role to user.
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Create(UserRoleVM userRoleVM)
         {
             if (!ModelState.IsValid)

@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebSecurityDemo.Repositories;
 using WebSecurityDemo.ViewModels;
 
 namespace WebSecurityDemo.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Manager")]
     public class RoleController : Controller
     {
         private readonly ILogger<RoleController> _logger;
@@ -30,6 +31,8 @@ namespace WebSecurityDemo.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Manager")]
         public ActionResult Create(RoleVM roleVM)
         {
             if (ModelState.IsValid)
@@ -49,26 +52,29 @@ namespace WebSecurityDemo.Controllers
             return View(roleVM);
         }
 
-        [HttpGet]
+        public RoleRepository Get_roleRepo()
+        {
+            return _roleRepo;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(string roleName)
         {
             if (string.IsNullOrWhiteSpace(roleName))
             {
+                TempData["Message"] = "Role name is required.";
                 return RedirectToAction(nameof(Index));
             }
 
             bool success = _roleRepo.DeleteRole(roleName);
 
-            if (!success)
-            {
-                TempData["Message"] = $"Failed to delete role: {roleName}";
-            }
-            else
-            {
-                TempData["Message"] = $"Role '{roleName}' was deleted.";
-            }
+            string message = success
+                ? $"Role '{roleName}' was deleted."
+                : $"Failed to delete role: {roleName}";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { message });
         }
     }
 }
